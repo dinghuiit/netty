@@ -5,9 +5,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MyServerHandler extends SimpleChannelInboundHandler<String> {
+public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
 
-    private static final Logger logger = LoggerFactory.getLogger(MyServerHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
         String result = handle(s);

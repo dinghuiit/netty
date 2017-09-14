@@ -1,6 +1,6 @@
 package com.zz.netty.demo.handler;
 
-import com.zz.netty.demo.server.MyServer;
+import com.zz.netty.demo.server.NettyServer;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -12,10 +12,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class MyClientHandler extends SimpleChannelInboundHandler<String> {
+public class NettyClientHandler extends SimpleChannelInboundHandler<String> {
 
     private static final ConcurrentHashMap<String,BlockingQueue<String>> resultMap = new ConcurrentHashMap<>();
-    private static final Logger logger = LoggerFactory.getLogger(MyServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
 
     /**
      * 接收服务端响应消息，并将消息放入到blockingQueue中

@@ -1,6 +1,6 @@
 package com.zz.netty.demo.client;
 
-import com.zz.netty.demo.handler.MyClientHandler;
+import com.zz.netty.demo.handler.NettyClientHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -15,10 +15,23 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
-public class MyClient implements INettyClient {
+public class SimpleNettyClient implements INettyClient {
+
+    private String host;
+    private int port;
     private Channel channel;
     private EventLoopGroup workGroup;
-    private MyClientHandler myClientHandler = new MyClientHandler();
+    private NettyClientHandler myClientHandler = new NettyClientHandler();
+
+    public SimpleNettyClient(){}
+    public SimpleNettyClient(String host, int port){
+        this.host = host;
+        this.port = port;
+    }
+
+    public void connect() throws InterruptedException {
+        connect(host,port);
+    }
 
     @Override
     public void connect(String host, int port) throws InterruptedException {
@@ -31,7 +44,7 @@ public class MyClient implements INettyClient {
             @Override
             protected void initChannel(SocketChannel socketChannel) throws Exception {
                 ByteBuf delimiter = Unpooled.copiedBuffer("^".getBytes());
-                socketChannel.pipeline().addLast(new DelimiterBasedFrameDecoder(102400,delimiter));
+                socketChannel.pipeline().addLast(new DelimiterBasedFrameDecoder(102400, delimiter));
 //                socketChannel.pipeline().addLast(new LineBasedFrameDecoder(1024));
                 socketChannel.pipeline().addLast(new StringEncoder());
                 socketChannel.pipeline().addLast(new StringDecoder());
@@ -46,12 +59,12 @@ public class MyClient implements INettyClient {
 
     @Override
     public String sendSync(String message) {
-        return myClientHandler.send(message, null,channel);
+        return myClientHandler.send(message, null, channel);
     }
 
     @Override
     public String sendAsync(String message, Long timeoutInSeconds) {
-        return myClientHandler.send(message, timeoutInSeconds,channel);
+        return myClientHandler.send(message, timeoutInSeconds, channel);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.zz.netty.demo.server;
 
-import com.zz.netty.demo.handler.MyServerHandler;
+import com.zz.netty.demo.handler.NettyServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -16,23 +16,26 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @Component
-public class MyServer {
-    private static final Logger logger = LoggerFactory.getLogger(MyServer.class);
+public class NettyServer {
+    private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
 
     private Channel channel;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
+    @Value("${netty.server.host:127.0.0.1}")
     private String host = "127.0.0.1";
+    @Value("${netty.server.port:1118}")
     private int port = 1118;
-    public MyServer(){};
-    public MyServer(String host, int port){
+    public NettyServer(){};
+    public NettyServer(String host, int port){
         this.host = host;
         this.port = port;
     }
@@ -54,16 +57,13 @@ public class MyServer {
                 //使用^作为消息分隔符，防止粘包情况出现。
                 ByteBuf delimiter = Unpooled.copiedBuffer("^".getBytes());
                 socketChannel.pipeline().addLast(new DelimiterBasedFrameDecoder(102400,delimiter));
-//                socketChannel.pipeline().addLast(new LineBasedFrameDecoder(1024));
                 socketChannel.pipeline().addLast(new StringEncoder());
                 socketChannel.pipeline().addLast(new StringDecoder());
-//                socketChannel.pipeline().addLast(new ObjectDecoder(1024*1024, ClassResolvers.weakCachingConcurrentResolver(this.getClass().getClassLoader())));
-//                socketChannel.pipeline().addLast(new ObjectEncoder());
-                socketChannel.pipeline().addLast(new MyServerHandler());
+                socketChannel.pipeline().addLast(new NettyServerHandler());
             }
         });
         channel = b.bind(host, port).sync().channel();
-        logger.info("netty server started, listening to port [{}].", port);
+        logger.debug("server started, listening to port [{}].", port);
     }
 
     @PreDestroy
@@ -73,6 +73,6 @@ public class MyServer {
         if (null != channel) {
             channel.closeFuture().syncUninterruptibly();
         }
-        logger.info("netty server stoped!");
+        logger.debug("server stoped!");
     }
 }
