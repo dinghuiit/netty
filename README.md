@@ -1,2 +1,2 @@
 # netty
-²âÊÔÒ»ÏÂgit
+netty is a high performance NIO framework
