@@ -1,2 +1,2 @@
 # netty
-netty is a high performance NIO framework
+netty is a high performance NIO framework .
